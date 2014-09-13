@@ -20,23 +20,99 @@ If any of the tokens in the query do not occur in the tweet corpus, then the idf
 ----------------------------------
 Part 2: PageRank
 
-We're going to implement the classic PageRank algorithm on our tweet corpus. Rather than scoring each tweet, however, you will find the PageRank score of users. First you should build a graph structure based on @mentions. You should verify with your twitter graph to make sure the following statements are true about your implementation:
+Implemented the classic PageRank algorithm on the tweet corpus. Rather than scoring each tweet, however, I calculated the PageRank score of users. 
+
+First I built a graph structure based on @mentions. 
 
 The edges are binary and directed. If Bob mentions Alice once, in 10 tweets, or 10 times in one tweet, there is an edge from Bob to Alice, but there is not an edge from Alice to Bob.
 The edges are unweighted. If Bob mentions Alice once, in 10 tweets, or 10 times in one tweet, there is only one edge from Bob to Alice.
 If a user mentions herself, ignore it.
 If a user is never mentioned and does not mention anyone, their pagerank should be zero. Do not include the user in the calculation.
-Assume all nodes start out with equal probability and the probability of the random surfer teleporting is 0.1 . You need to decide when to stop running the PageRank calculation. As same as Part 1, your program returns the top 50 results (which are users, not tweets!) with highest PageRank scores.
 
-You may need to install some python libraries: numpy and (optionally) scipy. NumPy is a tool for doing numerical computations in Python. It primarily deals with math operations on large arrays and matrices. NumPy is written in C and can do number crunching much faster than a Python program. There is a NumPy Tuturial. Scipy is built on top of NumPy and has support for sparse matrices.
+Assumed all nodes start out with equal probability and the probability of the random surfer teleporting is 0.1 . 
 
-Hints:
-
-Correctly parsing @mentions in a tweet is error-prone. Use the entities field.
-Try numpy.matrix.
-PageRank creates a O(n^2) matrix in memory where almost all of the values are the same. With some clever thinking you can use a sparse matrix instead of a matrix to make the program faster.
 
 ----------------------------------
 Part 3: Put Together
 
-Finally, you should develop an integrated tweet ranking system by integrating the cosine similarity (per tweet) and PageRank score (per user). We want this part to be open-ended. There are no restrictions on what scheme you use to integrate them. Clearly describe your method and the reason you pick it in the readme file. You should provide a discussion of your three ranking systems (including some sample queries and sample results). What do you observe? Why do you prefer one to the other? Compare them and summarize into readme file.
+Finally, developed an integrated tweet ranking system by integrating the cosine similarity (per tweet) and PageRank score (per user).
+
+-----------------------------------
+
+Running the project
+
+Execute Entry.py and supply the file to it as an argument.
+./Entry.py mars_tweets_medium.json
+
+This will prompt a menu containing 5 choices :
+1. Vector Space Retrieval
+2. Page Ranked Retrieval
+3. Integrated
+4. Exit
+5. Tagged Page Rank
+6. 
+Project Structure:
+● Entry.py:
+    ○ The entry point for the system.
+    ○ Instantiates Other functionalities and performs as the controller of the project
+● Utilities.py:
+  ○ Contains utility functions used throughout the project
+  ○ Performs functions like
+    ■ Reading Tweets
+    ■ Constructing commonly used Data Structures
+    ■ Counting Tf
+    ■ Calculating idf
+
+● VectorSpaceRetrieval.py
+  ○ class VectorSpaceRetrieval:
+    ■ builds Pre Processed Data by computing weighted tf-idf
+    ■ constructs a term-document matrix
+    ■ performs search based on the query in the term document matrix by
+        calculating the cosine similarity of each document in the corpus
+
+● PageRank.py
+  ○ class PageRank:
+    ■ creates a graph of user as adjacency list as needed by the prtoblem
+      statement.
+    ■ implements the Page Rank Algorithm on the adjacency List so as to rank users
+      on the number of incoming links , taking care of the dangling nodes.
+    ■ returns the result of the page rank to Entry.py
+
+● Integrated.py:
+  ○ class Integrated:
+    ■ This creates a combination of Vector Space retrieval System and the Page
+    Rank Algorithm.
+    ■ The aim of this module is to give certain weightage to both the contents of a
+    tweet and to the page ranked user.
+    ■ When this module receives a query from the user, then the Vector Space
+    Retrieval System is called to obtain the cosine scores of the documents
+    matching the query .
+    ■ Page Rank of Users calculated in the previous module is also fed as in input to
+    this module.
+    ■ The cosine scores of all the documents are scaled up to 1.0. ie all the cosine
+    scores are multiplied by a factor [scalingFactor] where scalingFactor = 1.0 /
+    maximum cosine score of any document in the result.
+    ■ Thus all the docs get a score out of one differential to the maximum score in
+    the result Set.
+    ■ The page rank of all the Users are Also scaled as
+    PageRankScaled[i]=1.0/OldPageRank[i] . This is carried out according to the
+    Zipf’s Law. In class we have studied that the rank one result carries far more
+    importance than the subsequent ranks of any retrieval system. Hence a
+    hyperbolic graph will be obtained which will hold all page ranked users in the
+    corpus.
+    ■ The final score of any document is thereby calculated as
+    FinalScoreOfDocument(i) = 0.5 * scaledCosineScoreOfDocument(i) +
+    PageRankScaled(tweeterOfDocument(i))
+    ■ I have assigned equal weights to the two retrieval system to get a balance
+    between the retrieved results. Further Results have been provided below.
+
+● TaggedPageRank.py [Bonus part]
+  ○ class TaggedPageRank:
+  ■ Tries to construct a page rank of users based on the a topic
+  ■ I have assigned each user with a topic-sensitive label. The topics have been
+  constructed by scanning the top 200 most frequent words in the scriptions of
+  all the users in the corpus. Then I have grouped the words into 4 main groups
+  [social,technology,profession,sports] based on the words appearing in the
+  top frequency list. Each of the broad topics or categories have a list of words
+  that closely describes the topic or are closely related with the topic. A static
+  data structure is maintained holding the topic and the related words as
