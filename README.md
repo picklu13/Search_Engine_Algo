@@ -143,7 +143,7 @@ Project Structure:
     ■ I have assigned equal weights to the two retrieval system to get a balance
     between the retrieved results. Further Results have been provided below.
 
-● TaggedPageRank.py [Bonus part]
+● TaggedPageRank.py 
   
   ○ class TaggedPageRank:
   
