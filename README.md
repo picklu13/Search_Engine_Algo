@@ -44,71 +44,111 @@ Running the project
 Execute Entry.py and supply the file to it as an argument.
 ./Entry.py mars_tweets_medium.json
 
+
 This will prompt a menu containing 5 choices :
+
 1. Vector Space Retrieval
+
 2. Page Ranked Retrieval
+
 3. Integrated
+
 4. Exit
+
 5. Tagged Page Rank
-6. 
+ 
 Project Structure:
+
 ● Entry.py:
+
     ○ The entry point for the system.
+    
     ○ Instantiates Other functionalities and performs as the controller of the project
+    
 ● Utilities.py:
+
   ○ Contains utility functions used throughout the project
+  
   ○ Performs functions like
+  
     ■ Reading Tweets
+    
     ■ Constructing commonly used Data Structures
+    
     ■ Counting Tf
+    
     ■ Calculating idf
+    
 
 ● VectorSpaceRetrieval.py
+
   ○ class VectorSpaceRetrieval:
+  
     ■ builds Pre Processed Data by computing weighted tf-idf
+    
     ■ constructs a term-document matrix
+    
     ■ performs search based on the query in the term document matrix by
         calculating the cosine similarity of each document in the corpus
+        
 
 ● PageRank.py
+
   ○ class PageRank:
+  
     ■ creates a graph of user as adjacency list as needed by the prtoblem
       statement.
+      
     ■ implements the Page Rank Algorithm on the adjacency List so as to rank users
       on the number of incoming links , taking care of the dangling nodes.
+      
     ■ returns the result of the page rank to Entry.py
+    
 
 ● Integrated.py:
+
   ○ class Integrated:
+  
     ■ This creates a combination of Vector Space retrieval System and the Page
     Rank Algorithm.
+    
     ■ The aim of this module is to give certain weightage to both the contents of a
     tweet and to the page ranked user.
+    
     ■ When this module receives a query from the user, then the Vector Space
     Retrieval System is called to obtain the cosine scores of the documents
     matching the query .
+    
     ■ Page Rank of Users calculated in the previous module is also fed as in input to
     this module.
+    
     ■ The cosine scores of all the documents are scaled up to 1.0. ie all the cosine
     scores are multiplied by a factor [scalingFactor] where scalingFactor = 1.0 /
     maximum cosine score of any document in the result.
+    
     ■ Thus all the docs get a score out of one differential to the maximum score in
     the result Set.
+    
     ■ The page rank of all the Users are Also scaled as
     PageRankScaled[i]=1.0/OldPageRank[i] . This is carried out according to the
     Zipf’s Law. In class we have studied that the rank one result carries far more
     importance than the subsequent ranks of any retrieval system. Hence a
     hyperbolic graph will be obtained which will hold all page ranked users in the
     corpus.
+    
     ■ The final score of any document is thereby calculated as
     FinalScoreOfDocument(i) = 0.5 * scaledCosineScoreOfDocument(i) +
     PageRankScaled(tweeterOfDocument(i))
+    
     ■ I have assigned equal weights to the two retrieval system to get a balance
     between the retrieved results. Further Results have been provided below.
 
 ● TaggedPageRank.py [Bonus part]
+  
   ○ class TaggedPageRank:
+  
   ■ Tries to construct a page rank of users based on the a topic
+  
   ■ I have assigned each user with a topic-sensitive label. The topics have been
   constructed by scanning the top 200 most frequent words in the scriptions of
   all the users in the corpus. Then I have grouped the words into 4 main groups
